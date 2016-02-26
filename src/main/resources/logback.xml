@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- releases resources, in web applications use another approach -->
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook" />
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.out</target>
+		<encoder>
+			<pattern>%date{HH:mm:ss} %-5level %40.40logger{40} : %msg%n</pattern>
+			<immediateFlush>false</immediateFlush>
+		</encoder>
+	</appender>
+	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<File>logs/foo.log</File>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss} %-5level %40.40logger{40} :
+				%msg%n</pattern>
+			<immediateFlush>false</immediateFlush>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/foo.%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="foo" level="TRACE" />
+	<logger name="net.sf.ehcache" level="TRACE" />
+
+
+	<root level="INFO">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="file" />
+	</root>
+
+</configuration>
