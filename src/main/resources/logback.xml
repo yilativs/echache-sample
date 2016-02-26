@@ -27,7 +27,7 @@
 	</appender>
 
 	<logger name="foo" level="TRACE" />
-	<logger name="net.sf.ehcache" level="TRACE" />
+	<logger name="net.sf.ehcache" level="INFO" />
 
 
 	<root level="INFO">
