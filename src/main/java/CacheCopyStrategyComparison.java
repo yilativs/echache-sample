@@ -2,6 +2,7 @@
 import java.util.Random;
 
 import foo.model.User;
+import foo.service.BlockingUserCacheService;
 import foo.service.UserService;
 
 public class CacheCopyStrategyComparison {
@@ -9,16 +10,19 @@ public class CacheCopyStrategyComparison {
 	private static final int REQUESTS_COUNT = 1000000;
 
 	public static void main(String[] args) {
+		compareInMemoryStrategies();
+	}
+
+	private static void compareInMemoryStrategies() {
 		UserService userService = new UserService();
 
 		Integer[] randomIdArray = getRandomIdArray(REQUESTS_COUNT, DIFFERENT_ID_COUNT);
 
-		
 		long startReferenceTime = System.currentTimeMillis();
 		for (Integer id : randomIdArray) {
-//			long interationStartTime = System.currentTimeMillis();
+			// long interationStartTime = System.currentTimeMillis();
 			User user = userService.getUserFromReferenceCache(id);
-//			long timeTaken = System.currentTimeMillis() - interationStartTime;
+			// long timeTaken = System.currentTimeMillis() - interationStartTime;
 			// System.out.println("id=" + user.getId() + " time=" + timeTaken);
 		}
 		long totalReferenceTimeTaken = System.currentTimeMillis() - startReferenceTime;
@@ -26,30 +30,28 @@ public class CacheCopyStrategyComparison {
 
 		long startCopyTime = System.currentTimeMillis();
 		for (Integer id : randomIdArray) {
-//			long interationStartTime = System.currentTimeMillis();
+			// long interationStartTime = System.currentTimeMillis();
 			User user = userService.getUserFromCopyBasedCache(id);
-//			long timeTaken = System.currentTimeMillis() - interationStartTime;
+			// long timeTaken = System.currentTimeMillis() - interationStartTime;
 			// System.out.println("id=" + user.getId() + " time=" + timeTaken);
 		}
 		double totalCopyTimeTaken = System.currentTimeMillis() - startCopyTime;
 
 		System.out.println("totalCopyTimeTaken=" + totalCopyTimeTaken);
-		
-		
-		
+
 		long startSerializedTime = System.currentTimeMillis();
 		for (Integer id : randomIdArray) {
-//			long interationStartTime = System.currentTimeMillis();
+			// long interationStartTime = System.currentTimeMillis();
 			User user = userService.getUserFromSerializedCache(id);
-//			long timeTaken = System.currentTimeMillis() - interationStartTime;
+			// long timeTaken = System.currentTimeMillis() - interationStartTime;
 			// System.out.println("id=" + user.getId() + " time=" + timeTaken);
 		}
 		long totalSerializedTimeTaken = System.currentTimeMillis() - startSerializedTime;
 		System.out.println("totalSerializedTimeTaken=" + totalSerializedTimeTaken);
 
-
 		userService.close();
 	}
+
 
 	public static Integer[] getRandomIdArray(int size, int bound) {
 		Integer[] result = new Integer[size];
