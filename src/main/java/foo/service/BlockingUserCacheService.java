@@ -18,7 +18,7 @@ public class BlockingUserCacheService implements Closeable {
 	// it returns a signleton instance or returns already created singleton instance (for multiple use newInstance)
 	CacheManager cacheManager = CacheManager.create();
 
-	private String getLogin(int id) {
+	private User getUser(int id) {
 		try {
 			// we will sleep id seconds :-)
 			Thread.sleep(MILLIS_TO_GET_LOGIN);
@@ -28,7 +28,7 @@ public class BlockingUserCacheService implements Closeable {
 		// we want to store relativly large strings to check the speed of disk cache
 		char[] chars = new char[100000];
 		Arrays.fill(chars, 'a');
-		return Integer.toString(id) + new String(chars);
+		return new User(id, Integer.toString(id) + new String(chars));
 	}
 
 	Map<Integer, ReentrantLock> idMonitorMap = new HashMap<>();
@@ -41,6 +41,12 @@ public class BlockingUserCacheService implements Closeable {
 			try {
 				boolean isFirstRequest = false;
 				synchronized (idMonitorMap) {
+					// we need second check in case the cache was updated before we took the lock
+					element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
+					if (element != null) {
+						System.out.println("got it");
+						return (User) element.getObjectValue();
+					}
 					idLock = idMonitorMap.get(id);
 					if (idLock == null) {
 						isFirstRequest = true;
@@ -50,7 +56,7 @@ public class BlockingUserCacheService implements Closeable {
 					}
 				}
 				if (isFirstRequest) {
-					element = new Element(id, new User(id, getLogin(id)));
+					element = new Element(id, getUser(id));
 					cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).put(element);
 					synchronized (idMonitorMap) {
 						idMonitorMap.remove(id);
@@ -76,6 +82,11 @@ public class BlockingUserCacheService implements Closeable {
 				boolean isFirstRequest = false;
 				try {
 					idMonitorMapReadWriteLock.updateLock().lock();
+					element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
+					if (element != null) {
+						System.out.println("got it");
+						return (User) element.getObjectValue();
+					}
 					idLock = idMonitorMap.get(id);
 					if (idLock == null) {
 						isFirstRequest = true;
@@ -93,7 +104,7 @@ public class BlockingUserCacheService implements Closeable {
 				}
 				if (isFirstRequest) {
 					System.out.println("putting new " + id);
-					element = new Element(id, new User(id, getLogin(id)));
+					element = new Element(id, getUser(id));
 					cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).put(element);
 					try {
 						idMonitorMapReadWriteLock.writeLock().lock();
