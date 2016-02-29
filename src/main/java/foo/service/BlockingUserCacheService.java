@@ -1,7 +1,6 @@
 package foo.service;
 
 import java.io.Closeable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,29 +11,15 @@ import foo.model.User;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-public class BlockingUserCacheService implements Closeable {
-	public static final int MILLIS_TO_GET_LOGIN = 5 * 1000;
+public class BlockingUserCacheService extends UserService implements Closeable {
 	private static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
-	// it returns a signleton instance or returns already created singleton instance (for multiple use newInstance)
+	// it returns a singleton instance or returns already created singleton instance (for multiple use newInstance)
 	CacheManager cacheManager = CacheManager.create();
-
-	private User getUser(int id) {
-		try {
-			// we will sleep id seconds :-)
-			Thread.sleep(MILLIS_TO_GET_LOGIN);
-		} catch (InterruptedException e) {
-			Thread.interrupted();// who dared to interrupt me?
-		}
-		// we want to store relativly large strings to check the speed of disk cache
-		char[] chars = new char[100000];
-		Arrays.fill(chars, 'a');
-		return new User(id, Integer.toString(id) + new String(chars));
-	}
 
 	Map<Integer, ReentrantLock> idMonitorMap = new HashMap<>();
 	private ReentrantReadWriteUpdateLock idMonitorMapReadWriteLock = new ReentrantReadWriteUpdateLock();
 
-	public User getUserFromSerializedCache(Integer id) {
+	public User getUserFromCacheSynhcronizedWithSynchronizeBlock(Integer id) {
 		Element element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
 		if (element == null) {
 			ReentrantLock idLock = null;
@@ -44,7 +29,6 @@ public class BlockingUserCacheService implements Closeable {
 					// we need second check in case the cache was updated before we took the lock
 					element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
 					if (element != null) {
-						System.out.println("got it");
 						return (User) element.getObjectValue();
 					}
 					idLock = idMonitorMap.get(id);
@@ -74,7 +58,7 @@ public class BlockingUserCacheService implements Closeable {
 		return (User) element.getObjectValue();
 	}
 
-	public User getUserFromSerializedCacheReadWriteLocked(Integer id) {
+	public User getUserFromCacheSynchronizedWithReentrantReadWriteUpdateLock(Integer id) {
 		Element element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
 		if (element == null) {
 			ReentrantLock idLock = null;
@@ -84,7 +68,6 @@ public class BlockingUserCacheService implements Closeable {
 					idMonitorMapReadWriteLock.updateLock().lock();
 					element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
 					if (element != null) {
-						System.out.println("got it");
 						return (User) element.getObjectValue();
 					}
 					idLock = idMonitorMap.get(id);
@@ -103,7 +86,6 @@ public class BlockingUserCacheService implements Closeable {
 					idMonitorMapReadWriteLock.updateLock().unlock();
 				}
 				if (isFirstRequest) {
-					System.out.println("putting new " + id);
 					element = new Element(id, getUser(id));
 					cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).put(element);
 					try {

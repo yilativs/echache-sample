@@ -8,7 +8,6 @@ public class User implements Serializable {
 	private final String login;
 
 	public User(int id, String login) {
-		super();
 		this.id = id;
 		this.login = login;
 	}

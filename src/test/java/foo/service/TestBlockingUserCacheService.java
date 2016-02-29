@@ -11,10 +11,10 @@ import org.junit.Test;
 public class TestBlockingUserCacheService {
 
 	private static final int DIFFERENT_IDS_COUNT = 10;
-	private static final int NUMBER_OF_SIMULTANEOS_THREADS = 7000;
+	private static final int NUMBER_OF_SIMULTANEOS_THREADS = 8000;
 
 	@Test
-	public void getUserFromSerializedCache() throws InterruptedException {
+	public void getUserFromCacheSynhcronizedWithSynchronizeBlock() throws InterruptedException {
 		final BlockingUserCacheService blockingUserCacheService = new BlockingUserCacheService();
 		blockingUserCacheService.cacheManager.clearAll();
 		long startTime = System.currentTimeMillis();
@@ -31,7 +31,7 @@ public class TestBlockingUserCacheService {
 					System.out.println("failed");
 				}
 				// all threads try to get same ID ranging from 0 to 9, only one should take it not from cache
-				blockingUserCacheService.getUserFromSerializedCache((int) (System.currentTimeMillis() % DIFFERENT_IDS_COUNT));
+				blockingUserCacheService.getUserFromCacheSynhcronizedWithSynchronizeBlock((int) (System.currentTimeMillis() % DIFFERENT_IDS_COUNT));
 			}
 		};
 		List<Thread> threads = new ArrayList<>();
@@ -47,13 +47,13 @@ public class TestBlockingUserCacheService {
 		long timeSpent = System.currentTimeMillis() - startTime;
 		// if at least one element taken taken not form cache twice, test fails
 		Assert.assertTrue(timeSpent < 2 * BlockingUserCacheService.MILLIS_TO_GET_LOGIN - 1);
-		System.out.println(timeSpent);
+		System.out.println("getUserFromCacheSynhcronizedWithSynchronizeBlock " + timeSpent);
 		Assert.assertTrue(blockingUserCacheService.idMonitorMap.isEmpty());
 		blockingUserCacheService.close();
 	}
 
 	@Test
-	public void getUserFromSerializedCacheReadWriteLocked() throws InterruptedException {
+	public void getUserFromCacheSynchronizedWithReentrantReadWriteUpdateLock() throws InterruptedException {
 		final BlockingUserCacheService blockingUserCacheService = new BlockingUserCacheService();
 		blockingUserCacheService.cacheManager.clearAll();
 		long startTime = System.currentTimeMillis();
@@ -69,7 +69,7 @@ public class TestBlockingUserCacheService {
 					System.out.println("failed");
 				}
 				// all threads try to get same ID ranging from 0 to 9, only one should take it not from cache
-				blockingUserCacheService.getUserFromSerializedCacheReadWriteLocked((int) (System.currentTimeMillis() % DIFFERENT_IDS_COUNT));
+				blockingUserCacheService.getUserFromCacheSynchronizedWithReentrantReadWriteUpdateLock((int) (System.currentTimeMillis() % DIFFERENT_IDS_COUNT));
 			}
 		};
 		List<Thread> threads = new ArrayList<>();
@@ -86,7 +86,7 @@ public class TestBlockingUserCacheService {
 		long timeSpent = System.currentTimeMillis() - startTime;
 		// if at least one element taken taken not form cache twice, test fails
 		Assert.assertTrue(timeSpent < 2 * BlockingUserCacheService.MILLIS_TO_GET_LOGIN - 1);
-		System.out.println(timeSpent);
+		System.out.println("getUserFromCacheSynchronizedWithReentrantReadWriteUpdateLock " + timeSpent);
 		Assert.assertTrue(blockingUserCacheService.idMonitorMap.isEmpty());
 	}
 

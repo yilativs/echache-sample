@@ -2,20 +2,19 @@
 import java.util.Random;
 
 import foo.model.User;
-import foo.service.BlockingUserCacheService;
-import foo.service.UserService;
+import foo.service.UserCacheAsideService;
 
 public class CacheCopyStrategyComparison {
-	private static final int DIFFERENT_ID_COUNT = 100;
-	private static final int REQUESTS_COUNT = 1000000;
+	private static final int DIFFERENT_ID_COUNT = 2;
+	private static final int REQUESTS_COUNT = 10000;
 
 	public static void main(String[] args) {
 		compareInMemoryStrategies();
 	}
 
 	private static void compareInMemoryStrategies() {
-		UserService userService = new UserService();
-
+		UserCacheAsideService userService = new UserCacheAsideService();
+		userService.clearCache();
 		Integer[] randomIdArray = getRandomIdArray(REQUESTS_COUNT, DIFFERENT_ID_COUNT);
 
 		long startReferenceTime = System.currentTimeMillis();
