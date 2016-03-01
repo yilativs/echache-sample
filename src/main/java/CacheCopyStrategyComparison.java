@@ -5,7 +5,7 @@ import foo.model.User;
 import foo.service.UserCacheAsideService;
 
 public class CacheCopyStrategyComparison {
-	private static final int DIFFERENT_ID_COUNT = 2;
+	private static final int DIFFERENT_ID_COUNT = 10;
 	private static final int REQUESTS_COUNT = 10000;
 
 	public static void main(String[] args) {
@@ -14,7 +14,7 @@ public class CacheCopyStrategyComparison {
 
 	private static void compareInMemoryStrategies() {
 		UserCacheAsideService userService = new UserCacheAsideService();
-		userService.clearCache();
+//		userService.clearCache();
 		Integer[] randomIdArray = getRandomIdArray(REQUESTS_COUNT, DIFFERENT_ID_COUNT);
 
 		long startReferenceTime = System.currentTimeMillis();

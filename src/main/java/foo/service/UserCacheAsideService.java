@@ -7,9 +7,9 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 public class UserCacheAsideService extends UserService implements Closeable {
-	private static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
-	private static final String USER_BY_ID_SERIALIZATION_BASED_CACHE = "userByIdSerializationBasedCache";
-	private static final String USER_BY_ID_REFERENCE_BASED_CACHE = "userByIdRefenceBasedCache";
+	public static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
+	public static final String USER_BY_ID_SERIALIZATION_BASED_CACHE = "userByIdSerializationBasedCache";
+	public static final String USER_BY_ID_REFERENCE_BASED_CACHE = "userByIdRefenceBasedCache";
 	// it returns a signleton instance or returns already created singleton instance (for multiple use newInstance)
 	private CacheManager cacheManager = CacheManager.create();
 

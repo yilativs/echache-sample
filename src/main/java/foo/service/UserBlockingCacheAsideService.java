@@ -11,7 +11,7 @@ import foo.model.User;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-public class BlockingUserCacheService extends UserService implements Closeable {
+public class UserBlockingCacheAsideService extends UserService implements Closeable {
 	private static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
 	// it returns a singleton instance or returns already created singleton instance (for multiple use newInstance)
 	CacheManager cacheManager = CacheManager.create();

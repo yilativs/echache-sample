@@ -3,9 +3,10 @@
 
 	<!-- java -Dnet.sf.ehcache.disabled=true will disable ehchache -->
 	<!-- http://www.ehcache.org/generated/2.10.1/pdf/Ehcache_Configuration_Guide.pdf -->
-	<!-- comment distStore to avoid using disk store at all -->
+	<!-- comment disKStore to avoid using disk store at all -->
 	<diskStore path="java.io.tmpdir" />
-	<defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="120" timeToLiveSeconds="120" maxEntriesLocalDisk="10000000" diskExpiryThreadIntervalSeconds="120">
+	
+	<defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600" maxEntriesLocalDisk="10000000" diskExpiryThreadIntervalSeconds="120">
 		<persistence strategy="localTempSwap" />
 		<!-- works only for entrerprise :set strategey = none for inmemory cache only, localTempSwap do not survive restarts, localRestartable -survive restarts -->
 		<!-- for the rest use overflowToDisk="true" diskPersistent="true" -->
@@ -17,18 +18,18 @@
 	<!-- WARNING by default referenes returned from MEMORY cache, in order to avoid them being changed in concurrent enviroment use copyOnRread/copyOnWrite default CopyStrategy is serialization, often alternative 
 		copyStrategy (e.g. copying constructor) is much faster -->
 	<!-- in memory cache with persistance that survives graceful shutdown, on crashes cache must be cleaned, usually ehcache detects if it crashed an cleans cache -->
-	<cache name="userByIdRefenceBasedCache" copyOnRead="false" copyOnWrite="false" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="1000000" eternal="false"
-		timeToIdleSeconds="120" timeToLiveSeconds="600">
+	<cache name="userByIdRefenceBasedCache" copyOnRead="false" copyOnWrite="false" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100" maxEntriesLocalDisk="1000000" eternal="false"
+		timeToIdleSeconds="300" timeToLiveSeconds="600">
 	</cache>
 
-	<cache name="userByIdCopyStrategyBasedCache" copyOnRead="true" copyOnWrite="true" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="1000000" eternal="false"
-		timeToIdleSeconds="120" timeToLiveSeconds="600">
+	<cache name="userByIdCopyStrategyBasedCache" copyOnRead="true" copyOnWrite="true" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100" maxEntriesLocalDisk="1000000" eternal="false"
+		timeToIdleSeconds="300" timeToLiveSeconds="600">
 		<!-- for in memory cache copyStrategy is almost x5 times faster than serialization, for disk perfomance there is no difference because -->
 		<copyStrategy class="foo.cache.UserCopyStrategy" />
 	</cache>
 
-	<cache name="userByIdSerializationBasedCache" copyOnRead="true" copyOnWrite="true" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="1000000" eternal="false"
-		timeToIdleSeconds="120" timeToLiveSeconds="600">
+	<cache name="userByIdSerializationBasedCache" copyOnRead="true" copyOnWrite="true" overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100" maxEntriesLocalDisk="1000000" eternal="false"
+		timeToIdleSeconds="300" timeToLiveSeconds="600">
 	</cache>
 
 
