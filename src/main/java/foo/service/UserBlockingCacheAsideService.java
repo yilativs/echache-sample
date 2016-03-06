@@ -10,7 +10,10 @@ import com.googlecode.concurentlocks.ReentrantReadWriteUpdateLock;
 import foo.model.User;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.constructs.blocking.BlockingCache;
 
+//Thundering herds preventing cache
+//see anoter example for spring
 public class UserBlockingCacheAsideService extends UserService implements Closeable {
 	private static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
 	// it returns a singleton instance or returns already created singleton instance (for multiple use newInstance)
@@ -18,6 +21,18 @@ public class UserBlockingCacheAsideService extends UserService implements Closea
 
 	Map<Integer, ReentrantLock> idMonitorMap = new HashMap<>();
 	private ReentrantReadWriteUpdateLock idMonitorMapReadWriteLock = new ReentrantReadWriteUpdateLock();
+
+	BlockingCache cache = new BlockingCache(cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE));
+
+	public User getUserFromCacheSynhcronizedWithEhCacheLocks(Integer id) {
+		Element element = cache.get(id);// blocks all subsequent requests if value is null
+		if (element == null) {
+			element = new Element(id, getUser(id));
+			cache.put(element);
+		}
+		return (User) element.getObjectValue();
+
+	}
 
 	public User getUserFromCacheSynhcronizedWithSynchronizeBlock(Integer id) {
 		Element element = cacheManager.getCache(USER_BY_ID_COPY_STRATEGY_BASED_CACHE).get(id);
