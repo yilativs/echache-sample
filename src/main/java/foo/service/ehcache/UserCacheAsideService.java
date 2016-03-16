@@ -1,4 +1,4 @@
-package foo.service;
+package foo.service.ehcache;
 
 import java.io.Closeable;
 import java.lang.management.ManagementFactory;
@@ -6,6 +6,7 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 
 import foo.model.User;
+import foo.service.UserService;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.management.ManagementService;

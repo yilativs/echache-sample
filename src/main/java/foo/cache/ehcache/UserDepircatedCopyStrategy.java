@@ -1,4 +1,4 @@
-package foo.cache;
+package foo.cache.ehcache;
 
 import foo.model.User;
 import net.sf.ehcache.Element;

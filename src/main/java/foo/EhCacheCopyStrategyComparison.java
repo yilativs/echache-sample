@@ -3,7 +3,7 @@ package foo;
 import java.util.Random;
 
 import foo.model.User;
-import foo.service.UserCacheAsideService;
+import foo.service.ehcache.UserCacheAsideService;
 
 public class EhCacheCopyStrategyComparison {
 	private static final int DIFFERENT_ID_COUNT = 10;

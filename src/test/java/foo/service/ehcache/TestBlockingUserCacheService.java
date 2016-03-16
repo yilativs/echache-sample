@@ -1,4 +1,4 @@
-package foo.service;
+package foo.service.ehcache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.concurrent.CyclicBarrier;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import foo.service.ehcache.UserBlockingCacheAsideService;
 
 public class TestBlockingUserCacheService {
 
