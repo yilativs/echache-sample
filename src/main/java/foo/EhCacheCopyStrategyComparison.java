@@ -3,7 +3,7 @@ package foo;
 import java.util.Random;
 
 import foo.model.User;
-import foo.service.ehcache.UserCacheAsideService;
+import foo.service.ehcache.EhCacheAsideUserService;
 
 public class EhCacheCopyStrategyComparison {
 	private static final int DIFFERENT_ID_COUNT = 10;
@@ -14,7 +14,7 @@ public class EhCacheCopyStrategyComparison {
 	}
 
 	private static void compareInMemoryStrategies() {
-		UserCacheAsideService userService = new UserCacheAsideService();
+		EhCacheAsideUserService userService = new EhCacheAsideUserService();
 //		userService.clearCache();
 		Integer[] randomIdArray = getRandomIdArray(REQUESTS_COUNT, DIFFERENT_ID_COUNT);
 

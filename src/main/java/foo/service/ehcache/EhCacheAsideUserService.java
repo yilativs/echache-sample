@@ -11,7 +11,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.management.ManagementService;
 
-public class UserCacheAsideService extends UserService implements Closeable {
+public class EhCacheAsideUserService extends UserService implements Closeable {
 	public static final String USER_BY_ID_COPY_STRATEGY_BASED_CACHE = "userByIdCopyStrategyBasedCache";
 	public static final String USER_BY_ID_SERIALIZATION_BASED_CACHE = "userByIdSerializationBasedCache";
 	public static final String USER_BY_ID_REFERENCE_BASED_CACHE = "userByIdRefenceBasedCache";
@@ -19,7 +19,7 @@ public class UserCacheAsideService extends UserService implements Closeable {
 
 	private final CacheManager cacheManager;
 
-	public UserCacheAsideService() {
+	public EhCacheAsideUserService() {
 		 cacheManager = CacheManager.create();
 		 MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 		 ManagementService.registerMBeans(cacheManager, mBeanServer, false, false, false, true);
