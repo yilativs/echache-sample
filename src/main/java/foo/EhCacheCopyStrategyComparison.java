@@ -5,7 +5,7 @@ import java.util.Random;
 import foo.model.User;
 import foo.service.UserCacheAsideService;
 
-public class CacheCopyStrategyComparison {
+public class EhCacheCopyStrategyComparison {
 	private static final int DIFFERENT_ID_COUNT = 10;
 	private static final int REQUESTS_COUNT = 10000;
 
