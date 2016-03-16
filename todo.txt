@@ -1,0 +1,2 @@
+add self populating cache example
+add cache as s.o.r example (perhaps it is irelavant, since AopCacheAside is better)
