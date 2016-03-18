@@ -4,16 +4,16 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 	private static final long serialVersionUID = -5103830073654986565L;
-	private final int id;
-	private final String login;
+	protected int userId;
+	protected String login;
 
-	public User(int id, String login) {
-		this.id = id;
+	public User(int userId, String login) {
+		this.userId = userId;
 		this.login = login;
 	}
 
-	public int getId() {
-		return id;
+	public int getUserId() {
+		return userId;
 	}
 
 	public String getLogin() {
@@ -24,7 +24,7 @@ public class User implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + userId;
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
 		return result;
 	}
@@ -38,7 +38,7 @@ public class User implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (id != other.id)
+		if (userId != other.userId)
 			return false;
 		if (login == null) {
 			if (other.login != null)

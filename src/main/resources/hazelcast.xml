@@ -112,33 +112,29 @@
 		<cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
 
 	</map>
-	
-	<map name="kid_event_map">
+
+	<map name="user_binary_memory_map">
 		<!-- Data type that will be used for storing recordMap. Possible values: BINARY (default): keys and values will be stored as binary data OBJECT : values will be stored in their object forms NATIVE : 
 			values will be stored in non-heap region of JVM -->
 		<in-memory-format>BINARY</in-memory-format>
 
 		<!-- Number of backups. If 1 is set as the backup-count for example, then all entries of the map will be copied to another JVM for fail-safety. 0 means no backup. -->
-		<!-- @@@ we want backup to be stored in 2 other nodes, that is our pear and backup stand alone HZ -->
-		<backup-count>2</backup-count>
+		<backup-count>1</backup-count>
 		<!-- Number of async backups. 0 means no backup. -->
 		<async-backup-count>0</async-backup-count>
 		<!-- Maximum number of seconds for each entry to stay in the map. Entries that are older than <time-to-live-seconds> and not updated for <time-to-live-seconds> will get automatically evicted from the 
 			map. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0. -->
-		<!--@@@ we want to store it for 1 day just in case someone will recent us old data -->
-		<time-to-live-seconds>100</time-to-live-seconds>
+		<time-to-live-seconds>600</time-to-live-seconds>
 		<!-- Maximum number of seconds for each entry to stay idle in the map. Entries that are idle(not touched) for more than <max-idle-seconds> will get automatically evicted from the map. Entry is touched 
 			if get, put or containsKey is called. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0. -->
-		<!-- @@@ we are fine with the events stay idle all the time -->
-		<max-idle-seconds>0</max-idle-seconds>
+		<max-idle-seconds>300</max-idle-seconds>
 		<!-- Valid values are: NONE (no eviction), LRU (Least Recently Used), LFU (Least Frequently Used). NONE is the default. -->
 		<eviction-policy>LRU</eviction-policy>
 		<!-- Maximum size of the map. When max size is reached, map is evicted based on the policy defined. Any integer between 0 and Integer.MAX_VALUE. 0 means Integer.MAX_VALUE. Default is 0. -->
-		<!-- @@@ since at the moment we have 500 000 requests per day, we multiply it by 4 in case we have that many clients -->
-		<max-size policy="PER_NODE">2000000</max-size>
-		
+		<max-size policy="PER_NODE">1000000</max-size>
+
 		<!-- When max. size is reached, specified percentage of the map will be evicted. Any integer between 0 and 100. If 25 is set for example, 25% of the entries will get evicted. -->
-		<!-- @@@ we will remove 10% of all events if we reached the limit  -->
+		<!-- @@@ we will remove 10% of all events if we reached the limit -->
 		<eviction-percentage>10</eviction-percentage>
 		<!-- Minimum time in milliseconds which should pass before checking if a partition of this map is evictable or not. Default value is 100 millis. -->
 		<!-- @@@ we do eviction check every 10 seconds -->
@@ -155,7 +151,46 @@
 		<cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
 
 	</map>
-	
+
+	<map name="user_object_memory_map">
+		<!-- Data type that will be used for storing recordMap. Possible values: BINARY (default): keys and values will be stored as binary data OBJECT : values will be stored in their object forms NATIVE : 
+			values will be stored in non-heap region of JVM -->
+		<in-memory-format>OBJECT</in-memory-format>
+
+		<!-- Number of backups. If 1 is set as the backup-count for example, then all entries of the map will be copied to another JVM for fail-safety. 0 means no backup. -->
+		<backup-count>1</backup-count>
+		<!-- Number of async backups. 0 means no backup. -->
+		<async-backup-count>0</async-backup-count>
+		<!-- Maximum number of seconds for each entry to stay in the map. Entries that are older than <time-to-live-seconds> and not updated for <time-to-live-seconds> will get automatically evicted from the 
+			map. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0. -->
+		<time-to-live-seconds>600</time-to-live-seconds>
+		<!-- Maximum number of seconds for each entry to stay idle in the map. Entries that are idle(not touched) for more than <max-idle-seconds> will get automatically evicted from the map. Entry is touched 
+			if get, put or containsKey is called. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0. -->
+		<max-idle-seconds>300</max-idle-seconds>
+		<!-- Valid values are: NONE (no eviction), LRU (Least Recently Used), LFU (Least Frequently Used). NONE is the default. -->
+		<eviction-policy>LRU</eviction-policy>
+		<!-- Maximum size of the map. When max size is reached, map is evicted based on the policy defined. Any integer between 0 and Integer.MAX_VALUE. 0 means Integer.MAX_VALUE. Default is 0. -->
+		<max-size policy="PER_NODE">1000000</max-size>
+
+		<!-- When max. size is reached, specified percentage of the map will be evicted. Any integer between 0 and 100. If 25 is set for example, 25% of the entries will get evicted. -->
+		<!-- @@@ we will remove 10% of all events if we reached the limit -->
+		<eviction-percentage>10</eviction-percentage>
+		<!-- Minimum time in milliseconds which should pass before checking if a partition of this map is evictable or not. Default value is 100 millis. -->
+		<!-- @@@ we do eviction check every 10 seconds -->
+		<min-eviction-check-millis>10000</min-eviction-check-millis>
+		<!-- While recovering from split-brain (network partitioning), map entries in the small cluster will merge into the bigger cluster based on the policy set here. When an entry merge into the cluster, 
+			there might an existing entry with the same key already. Values of these entries might be different for that same key. Which value should be set for the key? Conflict is resolved by the policy set here. 
+			Default policy is PutIfAbsentMapMergePolicy There are built-in merge policies such as com.hazelcast.map.merge.PassThroughMergePolicy; entry will be overwritten if merging entry exists for the key. com.hazelcast.map.merge.PutIfAbsentMapMergePolicy 
+			; entry will be added if the merging entry doesn't exist in the cluster. com.hazelcast.map.merge.HigherHitsMapMergePolicy ; entry with the higher hits wins. com.hazelcast.map.merge.LatestUpdateMapMergePolicy 
+			; entry with the latest update wins. -->
+		<merge-policy>com.hazelcast.map.merge.PutIfAbsentMapMergePolicy</merge-policy>
+
+		<!-- Control caching of de-serialized values. Caching makes query evaluation faster, but it cost memory. Possible Values: NEVER: Never cache deserialized object INDEX-ONLY: Caches values only when they 
+			are inserted into an index. ALWAYS: Always cache deserialized values. -->
+		<cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
+
+	</map>
+
 
 	<multimap name="default">
 		<backup-count>1</backup-count>
@@ -202,6 +237,9 @@
 
 	<serialization>
 		<portable-version>0</portable-version>
+		<data-serializable-factories>
+			<data-serializable-factory factory-id="555">foo.cache.hazelcast.FooDataSerializableFactory</data-serializable-factory>
+		</data-serializable-factories>
 	</serialization>
 
 	<services enable-defaults="true" />

@@ -11,13 +11,13 @@ public class UserCopyStrategy implements ReadWriteCopyStrategy<Element> {
 	@Override
 	public Element copyForRead(Element userElement, ClassLoader classLoader) {
 		User user = (User) userElement.getObjectValue();
-		return new Element(userElement.getObjectKey(),new User(user.getId(),user.getLogin()));
+		return new Element(userElement.getObjectKey(),new User(user.getUserId(),user.getLogin()));
 	}
 
 	@Override
 	public Element copyForWrite(Element userElement, ClassLoader classLoader) {
 		User user = (User) userElement.getObjectValue();
-		return new Element(userElement.getObjectKey(),new User(user.getId(),user.getLogin()));
+		return new Element(userElement.getObjectKey(),new User(user.getUserId(),user.getLogin()));
 	}
 
 }
