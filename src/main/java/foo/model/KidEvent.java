@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class KidEvent implements Serializable {
 	private static final long serialVersionUID = 1810149628222255805L;
-	final long dateTime;
-	final int eventType;
-	final long kidId;
+	protected long dateTime;
+	protected int eventType;
+	protected long kidId;
 
 	public KidEvent(long kidId, long dateTime, int eventType) {
 		this.kidId = kidId;
